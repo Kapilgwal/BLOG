@@ -17,7 +17,7 @@ class Article(models.Model):
     title = models.CharField(max_length=1000)
     content = models.TextField(max_length=100000)
     written_on = models.DateTimeField(auto_now_add=True)
-    updated_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.title}"
