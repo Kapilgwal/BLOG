@@ -1,111 +1,86 @@
-from django.http import JsonResponse
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.shortcuts import get_object_or_404
 from .models import Author, Article
 from .serializers import AuthorSerializer, ArticleSerializer
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.parsers import JSONParser
 
-@csrf_exempt
-def author(request, id=None):
-    if request.method == 'GET':
-        if id is not None:
-            try:
-                auth = Author.objects.get(id=id)
-                serializer = AuthorSerializer(auth)
-                return JsonResponse(serializer.data, safe=False)
-            except Author.DoesNotExist:
-                return JsonResponse({'error': 'Author not found'}, status=404)
-        else:
-            authors = Author.objects.all()
-            serializer = AuthorSerializer(authors, many=True)
-            return JsonResponse(serializer.data, safe=False)
-        
-    elif request.method == 'POST':
-        data = JSONParser().parse(request)
-        serializer = AuthorSerializer(data=data)
 
+class AuthorAPIView(APIView):
+
+    def get(self, request,id = None):
+        if id:
+            author = get_object_or_404(Author, id=id)
+            serializer = AuthorSerializer(author)
+            return Response(serializer.data)
+        authors = Author.objects.all()
+        serializer = AuthorSerializer(authors, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = AuthorSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse({'msg': 'Author created successfully'}, status=201)
-        
-        return JsonResponse({'msg': 'Invalid data', 'errors': serializer.errors}, status=400)
-    
-    elif request.method == 'PUT':
-        data = JSONParser().parse(request)
+            return Response({'msg': 'Author created successfully'}, status=status.HTTP_201_CREATED)
+        return Response({'msg': 'Invalid data', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-        if id is not None:
-            try:
-                auth = Author.objects.get(id=id) 
-                serializer = AuthorSerializer(auth, data=data)
-                if serializer.is_valid():
-                    serializer.save()
-                    return JsonResponse({'msg': 'Author updated successfully'}, status=200)
-                else:
-                    return JsonResponse({'msg': 'Invalid data', 'errors': serializer.errors}, status=400)
+    def put(self, request):
+        id = request.data.get("id")
 
-            except Author.DoesNotExist:
-                return JsonResponse({'msg': 'Author not found'}, status=404)
-        else:
-            return JsonResponse({'msg': 'Please provide an ID to update the data'}, status=400)
+        if not id:
+            return Response({'msg': 'Please provide an ID to update'}, status=status.HTTP_400_BAD_REQUEST)
 
-    elif request.method == 'DELETE':
-        if id is not None:
-            try:
-                auth = Author.objects.get(id=id)  
-                auth.delete()
-                return JsonResponse({'msg': 'Author Deleted successfully'}, status=200)
-              
-            except Author.DoesNotExist:
-                return JsonResponse({'msg': 'Author not found'}, status=404)
-        else:
-            return JsonResponse({'msg': 'Please provide an ID to delete the data'}, status=400)
-
-@csrf_exempt
-def article(request, id=None):
-    if request.method == 'GET':
-        if id is not None:
-            try:
-                art = Article.objects.get(id=id)
-                serializer = ArticleSerializer(art)
-                return JsonResponse(serializer.data, safe=False)
-            except Article.DoesNotExist:
-                return JsonResponse({'error': 'Article not found'}, status=404)
-        else:
-            articles = Article.objects.all()
-            serializer = ArticleSerializer(articles, many=True)
-            return JsonResponse(serializer.data, safe=False)
-    
-    elif request.method == 'POST':
-        data = JSONParser().parse(request)
-        serializer = ArticleSerializer(data=data)
-
+        author = get_object_or_404(Author, id=id)
+        serializer = AuthorSerializer(author, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse({'msg': 'Article created successfully'},safe = False ,status=201)
-        
-        return JsonResponse({'msg': 'Invalid data', 'errors': serializer.errors}, status=400)
+            return Response({'msg': 'Author updated successfully'}, status=status.HTTP_200_OK)
+        return Response({'msg': 'Invalid data', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-    elif request.method == 'PUT':
-        data = JSONParser().parse(request)
+    def delete(self, request):
+        id = request.data.get("id")
 
-        if id is not None:
-            art = Article.objects.get(id = id)
-            serializer = ArticleSerializer(art , data=data)
+        if not id:
+            return Response({'msg': 'Please provide an ID to delete'}, status=status.HTTP_400_BAD_REQUEST)
 
-            if serializer.is_valid():
-                serializer.save()
-                return JsonResponse({'msg': 'Article Updated successfully'}, status=201)
-
-            else:
-                return JsonResponse({'msg' : 'Invalid data', 'errors' : serializer.errors})
-        return JsonResponse({'msg': 'Invalid data', 'errors': serializer.errors}, status=400)
+        author = get_object_or_404(Author, id=id)
+        author.delete()
+        return Response({'msg': 'Author deleted successfully'}, status=status.HTTP_200_OK)
 
 
-    elif request.method == 'DELETE':
-        data = JSONParser().parse(request)
+class ArticleAPIView(APIView):
 
-        if id is not None:
-            art = Article.objects.get(id = id)
-            art.delete()
-            return JsonResponse({'msg': 'Article Deleted successfully'}, status=201)
-        else:
-            return JsonResponse({'msg' : 'Please give a valid id to delete the article'})
+    def get(self, request, id=None):
+        if id:
+            article = get_object_or_404(Article, id=id)
+            serializer = ArticleSerializer(article)
+            return Response(serializer.data)
+        articles = Article.objects.all()
+        serializer = ArticleSerializer(articles, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = ArticleSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'msg': 'Article created successfully'}, status=status.HTTP_201_CREATED)
+        return Response({'msg': 'Invalid data', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, id=None):
+        if not id:
+            return Response({'msg': 'Please provide an ID to update'}, status=status.HTTP_400_BAD_REQUEST)
+
+        article = get_object_or_404(Article, id=id)
+        serializer = ArticleSerializer(article, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'msg': 'Article updated successfully'}, status=status.HTTP_200_OK)
+        return Response({'msg': 'Invalid data', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, id=None):
+        if not id:
+            return Response({'msg': 'Please provide an ID to delete'}, status=status.HTTP_400_BAD_REQUEST)
+
+        article = get_object_or_404(Article, id=id)
+        article.delete()
+        return Response({'msg': 'Article deleted successfully'}, status=status.HTTP_200_OK)
