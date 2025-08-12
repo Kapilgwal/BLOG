@@ -22,4 +22,12 @@ class Article(models.Model):
     def __str__(self):
         return f"{self.title}"
     
+class Comments(models.Model):
+    article = models.ForeignKey(Article, on_delete=models.CASCADE,related_name="comment")
+    comment = models.TextField(max_length=100000,null=True,blank=True)
+    written_on = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.comment[:100]}..."
+    
 
