@@ -4,6 +4,7 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from .models import Author, Article, Comments
 from .serializers import AuthorSerializer, ArticleSerializer, CommentSerializer
+from .pagination import AuthorPagination, AritclePagination
 
 
 class AuthorAPIView(APIView):
@@ -12,8 +13,10 @@ class AuthorAPIView(APIView):
             author = get_object_or_404(Author, id=id)
             serializer = AuthorSerializer(author)
             return Response(serializer.data)
-        authors = Author.objects.all()
-        serializer = AuthorSerializer(authors, many=True)
+        authors = Author.objects.all().order_by('id')
+        paginator = AuthorPagination()
+        pagination_author = paginator.paginate_queryset(authors,request)
+        serializer = AuthorSerializer(pagination_author, many=True)
         return Response(serializer.data)
 
     def post(self, request):
@@ -51,8 +54,10 @@ class ArticleAPIView(APIView):
             article = get_object_or_404(Article, id=id)
             serializer = ArticleSerializer(article)
             return Response(serializer.data)
-        articles = Article.objects.all()
-        serializer = ArticleSerializer(articles, many=True)
+        articles = Article.objects.all().order_by('-updated_on')
+        paginator = AritclePagination()
+        pagination_article = paginator.paginate_queryset(articles,request)
+        serializer = ArticleSerializer(pagination_article, many=True)
         return Response(serializer.data)
 
     def post(self, request):
