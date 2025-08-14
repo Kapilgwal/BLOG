@@ -41,5 +41,6 @@ This project uses a custom `AuthorPagination` (and similar for other views) that
 **Query Parameters:**
 - `page` – The page number (default: 1)
 - `page_size` – Number of items per page (default: 4, max: 100)
+- 'search' -- The search for the author , article on the basis of parameter
 
 **Example:**
