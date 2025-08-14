@@ -31,6 +31,7 @@ Includes **pagination** support for listing endpoints.
 | Articles         | DELETE | `/api/articles/{id}/`                         | Delete article by ID                 |
 | Comments         | GET    | `/api/articles/{article_id}/comments/`        | List all comments for an article     |
 | Comments         | POST   | `/api/articles/{article_id}/comments/`        | Add comment to an article            |
+| Search        | GET   | `/api/articles/aritcles/?search = 'parameter'`        | Add comment to an article            |
 
 ---
 
@@ -41,6 +42,6 @@ This project uses a custom `AuthorPagination` (and similar for other views) that
 **Query Parameters:**
 - `page` – The page number (default: 1)
 - `page_size` – Number of items per page (default: 4, max: 100)
-- 'search' -- The search for the author , article on the basis of parameter
+- `search` -- The search for the author , article on the basis of parameter
 
 **Example:**
