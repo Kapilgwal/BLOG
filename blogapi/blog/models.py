@@ -16,6 +16,7 @@ class Article(models.Model):
     author = models.ForeignKey(Author,on_delete=models.CASCADE)
     title = models.CharField(max_length=1000)
     content = models.TextField(max_length=100000)
+    tags = models.TextField(max_length=20,null=True,blank=True)
     written_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
 
@@ -29,5 +30,6 @@ class Comments(models.Model):
 
     def __str__(self):
         return f"{self.comment[:100]}..."
+    
     
 

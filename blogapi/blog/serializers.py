@@ -21,6 +21,7 @@ class ArticleSerializer(serializers.ModelSerializer):
             'author',
             'author_id',   
             'title',
+            'tags',
             'content',
             'written_on',
             'updated_on'

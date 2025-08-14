@@ -1,12 +1,9 @@
-from django.urls import path
-from .views import AuthorAPIView, ArticleAPIView, CommentAPIView
+from .views import AuthorViewSet,ArticleViewSet,CommentViewSet
+from rest_framework.routers  import DefaultRouter
 
-urlpatterns = [
-    path('authors/', AuthorAPIView.as_view()),            
-    path('authors/<int:id>/', AuthorAPIView.as_view()),   
+router = DefaultRouter()
+router.register(r'articles',ArticleViewSet,basename='article')
+router.register(r'authors',AuthorViewSet,basename='authors')
+router.register(r'comments',CommentViewSet,basename='comments')
 
-    path('articles/', ArticleAPIView.as_view()),           
-    path('articles/<int:id>/', ArticleAPIView.as_view()), 
-
-    path('comments/<int:article_id>/',CommentAPIView.as_view())
-]
+urlpatterns = router.urls
