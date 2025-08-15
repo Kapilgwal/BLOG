@@ -31,7 +31,7 @@ Includes **pagination** support for listing endpoints.
 | Articles         | DELETE | `/api/articles/{id}/`                         | Delete article by ID                 |
 | Comments         | GET    | `/api/articles/{article_id}/comments/`        | List all comments for an article     |
 | Comments         | POST   | `/api/articles/{article_id}/comments/`        | Add comment to an article            |
-| Search        | GET   | `/api/articles/aritcles/?search = 'parameter'`        | Add comment to an article            |
+| Search        | GET   | `/api/articles/aritcles/?search = 'parameter like name title tag etc which is in the the list'`        | Add comment to an article            |
 
 ---
 

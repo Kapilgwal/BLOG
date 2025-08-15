@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
     'blog'
 ]
 
@@ -128,3 +129,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #     'DEFAULT_PAGINATION_CLASS' : 'rest_framework.pagination.PageNumberPagination',
 #     'PAGE_SIZE' : 4,
 # }
+
+AUTH_USER_MODEL = 'blog.User'
+
+AUTHENTICATION_BACKENDS = [
+    'blog.backends.EmailBackend',
+]
