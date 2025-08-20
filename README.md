@@ -38,6 +38,7 @@ Includes **pagination** support for listing endpoints.
 ## 🔄 Pagination Usage
 
 This project uses a custom `AuthorPagination` (and similar for other views) that extends DRF’s `PageNumberPagination`.
+It helps us give a good view in a small manner
 
 **Query Parameters:**
 - `page` – The page number (default: 1)
